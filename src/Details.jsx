@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
+import ErrorBoundry from "./ErrorBoundry";
 import fetchPet from "./fetchPet";
 import Carousel from "./Carousel";
 const Details = () => {
@@ -9,7 +10,7 @@ const Details = () => {
   if (results.isLoading) {
     return (
       <div className="loading-pane">
-        <h2 className="loader">🌞</h2>
+        <h2 className="loader">🌀</h2>
       </div>
     );
   }
@@ -30,5 +31,10 @@ const Details = () => {
     </div>
   );
 };
-
-export default Details;
+export default function DatailsErrorBoundry(props) {
+  return (
+    <ErrorBoundry>
+      <Details {...props} />
+    </ErrorBoundry>
+  );
+}
