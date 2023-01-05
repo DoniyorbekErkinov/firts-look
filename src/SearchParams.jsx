@@ -1,4 +1,10 @@
-import { useContext, useState } from "react";
+import {
+  useContext,
+  useState,
+  useDeferredValue,
+  useMemo,
+  useTransition,
+} from "react";
 import { useQuery } from "@tanstack/react-query";
 import AdoptedPetContext from "./AdoptedPetContext";
 import fetchSearch from "./fetchSearch";
@@ -15,9 +21,15 @@ const SearchParams = () => {
   const [adoptedPet] = useContext(AdoptedPetContext);
   const [animal, setAnimal] = useState("");
   const [breeds] = useBreedList(animal);
+  const [isPanding, startTransition] = useTransition();
 
   const res = useQuery(["search", requestParams], fetchSearch);
   const pets = res?.data?.pets ?? [];
+  const defferedPets = useDeferredValue(pets);
+  const renderedPets = useMemo(
+    () => <Results pets={defferedPets} />,
+    [defferedPets]
+  );
   return (
     <div className="my-0 mx-auto w-11/12 search-params">
       <form
@@ -30,7 +42,9 @@ const SearchParams = () => {
             location: formData.get("location") ?? "",
             breed: formData.get("breed") ?? "",
           };
-          setRequestParams(obj);
+          startTransition(() => {
+            setRequestParams(obj);
+          });
         }}
       >
         {adoptedPet ? (
@@ -80,11 +94,17 @@ const SearchParams = () => {
             ))}
           </select>
         </label>
-        <button className="rounded px-6 py-2 border-none bg-orange-500 text-white">
-          Submit
-        </button>
+        {isPanding ? (
+          <div className="mini loading-pane">
+            <h1 className="loader">😁</h1>
+          </div>
+        ) : (
+          <button className="rounded px-6 py-2 border-none bg-orange-500 text-white">
+            Submit
+          </button>
+        )}
       </form>
-      <Results pets={pets} />
+      {renderedPets}
     </div>
   );
 };
