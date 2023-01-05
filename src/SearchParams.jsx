@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import fetchSearch from "./fetchSearch";
 import useBreedList from "./useBreedList";
 import Results from "./Results";
-const ANIMELS = ["bird", "dog", "cat", "caw"];
+const ANIMALS = ["bird", "cat", "dog", "rabbit", "reptile"];
 
 const SearchParams = () => {
   const [requestParams, setRequestParams] = useState({
@@ -45,7 +45,7 @@ const SearchParams = () => {
             placeholder="Animal"
           >
             <option />
-            {ANIMELS.map((animal) => (
+            {ANIMALS.map((animal) => (
               <option key={animal}>{animal}</option>
             ))}
           </select>

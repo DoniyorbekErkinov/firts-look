@@ -8,7 +8,7 @@ export default function useBreedList(animal) {
   /**
    * custom hook with query
    */
-  const result = useQuery(["animals", animal], fetchBreedList);
+  const result = useQuery(["breeds", animal], fetchBreedList);
   return [result?.data?.breeds ?? [], result.status];
   /**
    * custom hook with query
