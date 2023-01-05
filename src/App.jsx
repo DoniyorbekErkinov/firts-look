@@ -1,11 +1,16 @@
-import { createRoot } from "react-dom/client";
-import { HashRouter, Link, Route, Routes } from "react-router-dom";
+import { Link, Route, Routes } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import AdoptedPetContext from "./AdoptedPetContext";
-import SearchParams from "./SearchParams";
-import Details from "./Details";
 import { useState, lazy, Suspense } from "react";
 import "./index.css";
+/**
+ * This is code siplitting it can be usefull in big apps
+ */
+const Details = lazy(() => import("./Details"));
+const SearchParams = lazy(() => import("./SearchParams"));
+/**
+ * This is code siplitting it can be usefull in big apps
+ */
 
 const queryClinet = new QueryClient({
   defaultOptions: {
@@ -25,9 +30,21 @@ const App = () => {
         background: "url(http://pets-images.dev-apis.com/pets/wallpaperC.jpg)",
       }}
     >
-      <HashRouter>
-        <AdoptedPetContext.Provider value={adoptedPet}>
-          <QueryClientProvider client={queryClinet}>
+      <AdoptedPetContext.Provider value={adoptedPet}>
+        <QueryClientProvider client={queryClinet}>
+          {/*
+           * This is code siplitting it can be usefull in big apps
+           */}
+          <Suspense
+            fallback={
+              <div className="loading-pane">
+                <h2 className="loader">🐶</h2>
+              </div>
+            }
+          >
+            {/*
+             * This is code siplitting it can be usefull in big apps
+             */}
             <header className="w-full mb-10 p-7 text-center bg-gradient-to-b from-yellow-400 via-orange-500 to-red-500">
               <Link
                 to={"/"}
@@ -40,16 +57,13 @@ const App = () => {
               <Route path="/" element={<SearchParams />} />
               <Route path="/details/:id" element={<Details />} />
             </Routes>
-          </QueryClientProvider>
-        </AdoptedPetContext.Provider>
-      </HashRouter>
+          </Suspense>
+        </QueryClientProvider>
+      </AdoptedPetContext.Provider>
     </div>
   );
 };
-
-const container = document.getElementById("root");
-const root = createRoot(container);
-root.render(<App />);
+export default App;
 
 // const App = () => {
 //   return React.createElement("div", {}, [
