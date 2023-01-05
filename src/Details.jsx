@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import AdoptedPetContext from "./AdoptedPetContext";
 import ErrorBoundry from "./ErrorBoundry";
 import fetchPet from "./fetchPet";
 import Carousel from "./Carousel";
@@ -10,7 +11,8 @@ const Details = () => {
   const [openModal, setOpenModal] = useState(false);
   const { id } = useParams();
   const results = useQuery(["details", id], fetchPet);
-
+  const navigate = useNavigate();
+  const [_, setAdoptedPet] = useContext(AdoptedPetContext);
   if (results.isLoading) {
     return (
       <div className="loading-pane">
@@ -35,7 +37,14 @@ const Details = () => {
               <div>
                 <h1>Would you like to adopt {pet.name}?</h1>
                 <div className="buttons">
-                  <button>Yes</button>
+                  <button
+                    onClick={() => {
+                      setAdoptedPet(pet);
+                      navigate("/");
+                    }}
+                  >
+                    Yes
+                  </button>
                   <button onClick={() => setOpenModal(false)}>No</button>
                 </div>
               </div>
